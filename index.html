@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soup School｜BeautifulSoup 完整教學</title>
+  <meta name="description" content="從零開始學習 Python BeautifulSoup 網頁解析與爬蟲。">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+    :root { --navy:#12212c; --ink:#17232d; --muted:#71808b; --line:#dce5e8; --bg:#f5f8f7; --mint:#c8f4dc; --green:#20845d; --coral:#ef7154; --yellow:#f6ca60; --code:#15252b; }
+    * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; color:var(--ink); background:var(--bg); font-family:'DM Sans','Noto Sans TC',sans-serif; line-height:1.6; } button,input { font:inherit; } button { cursor:pointer; }
+    .top { background:var(--navy); color:#dce9e7; padding:9px 5vw; display:flex; justify-content:space-between; font-size:12px; letter-spacing:.04em; } .top b { color:var(--mint); }
+    header { background:var(--bg); padding:27px 5vw 21px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:10; } .logo { display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:-.05em; font-size:20px; } .logo-mark { width:32px; height:32px; background:var(--coral); color:white; display:grid; place-items:center; border-radius:9px 9px 9px 2px; font-family:'DM Mono'; } nav { display:flex; gap:25px; font-size:13px; color:var(--muted); } nav a { color:inherit; text-decoration:none; } nav a:hover { color:var(--green); } .header-cta { border:1px solid var(--ink); background:transparent; border-radius:8px; padding:8px 13px; font-weight:700; font-size:12px; }
+    .hero { padding:74px 5vw 78px; max-width:1280px; margin:auto; display:grid; grid-template-columns:1.05fr .95fr; gap:50px; align-items:center; } .kicker { color:var(--green); text-transform:uppercase; letter-spacing:.2em; font-size:12px; font-weight:700; } h1 { font-size:clamp(42px,6.5vw,86px); line-height:.98; letter-spacing:-.09em; margin:17px 0 23px; max-width:670px; } .hero p { color:var(--muted); max-width:550px; margin:0 0 28px; font-size:16px; } .hero-actions { display:flex; gap:10px; flex-wrap:wrap; } .primary { background:var(--coral); color:#fff; border:0; border-radius:8px; padding:13px 19px; font-weight:700; } .secondary { background:#fff; color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:13px 19px; font-weight:700; }
+    .terminal { background:var(--code); color:#dff5e9; border-radius:18px; padding:22px; box-shadow:20px 22px 0 #dcebe3; transform:rotate(1.5deg); } .terminal-top { display:flex; gap:6px; border-bottom:1px solid #2d4147; padding-bottom:16px; margin-bottom:18px; } .dot { width:9px; height:9px; border-radius:50%; background:var(--coral); } .dot:nth-child(2) { background:var(--yellow); } .dot:nth-child(3) { background:var(--mint); } pre, code { font-family:'DM Mono',monospace; } .terminal pre { margin:0; font-size:13px; line-height:2; white-space:pre-wrap; } .prompt { color:var(--yellow); } .function { color:#a9ddff; } .string { color:#ffc98c; } .comment { color:#7b9a99; }
+    .layout { max-width:1280px; margin:auto; padding:0 5vw 100px; display:grid; grid-template-columns:220px 1fr; gap:55px; } .side { position:sticky; top:105px; align-self:start; } .side-label { text-transform:uppercase; font-size:11px; letter-spacing:.16em; color:var(--muted); font-weight:700; margin-bottom:12px; } .side a { display:block; color:var(--muted); text-decoration:none; padding:8px 0; font-size:13px; border-left:2px solid transparent; padding-left:13px; } .side a:hover, .side a.active { color:var(--green); border-color:var(--green); font-weight:700; } .side-note { border-top:1px solid var(--line); margin-top:23px; padding-top:18px; color:var(--muted); font-size:12px; }
+    .content { min-width:0; } .section { scroll-margin-top:105px; padding:15px 0 58px; border-bottom:1px solid var(--line); margin-bottom:48px; } .section:last-child { border:0; } .section-head { display:flex; align-items:flex-start; gap:18px; margin-bottom:24px; } .number { color:var(--coral); font-family:'DM Mono'; font-size:14px; padding-top:8px; } h2 { font-size:34px; letter-spacing:-.07em; line-height:1.1; margin:0; } h3 { font-size:20px; letter-spacing:-.04em; margin:29px 0 10px; } .lead { color:var(--muted); margin:0; max-width:700px; } .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; } .info { background:white; border:1px solid var(--line); padding:20px; border-radius:12px; } .info strong { display:block; margin-bottom:6px; } .info p { color:var(--muted); font-size:13px; margin:0; } .pill { display:inline-block; background:var(--mint); color:#146143; padding:3px 8px; border-radius:4px; font-family:'DM Mono'; font-size:11px; margin-bottom:10px; }
+    .code-wrap { position:relative; background:var(--code); border-radius:12px; margin:17px 0; overflow:hidden; } .code-label { color:#90aaa7; font-size:11px; padding:11px 17px; border-bottom:1px solid #2c4247; } .code-wrap pre { color:#e4f4ed; font-size:13px; line-height:1.75; padding:17px; margin:0; overflow:auto; } .copy { position:absolute; right:11px; top:8px; color:#bdebcf; background:#253b3e; border:1px solid #46605b; border-radius:5px; padding:4px 8px; font-size:11px; } .copy:hover { background:var(--green); color:#fff; }
+    .compare { display:grid; grid-template-columns:1fr 1fr; gap:14px; } .compare > div { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fff; } .compare h4 { margin:0; padding:11px 15px; font-size:12px; text-transform:uppercase; letter-spacing:.12em; } .compare .bad h4 { background:#fff0eb; color:#bb4e3b; } .compare .good h4 { background:#e2f7e9; color:#23724d; } .compare pre { font-size:12px; margin:0; padding:15px; overflow:auto; }
+    .searchbox { background:#fff; border:1px solid var(--line); border-radius:11px; display:flex; align-items:center; padding:9px 13px; margin:0 0 28px; } .searchbox span { color:var(--muted); margin-right:8px; } .searchbox input { border:0; outline:0; background:transparent; width:100%; font-size:13px; }
+    .quiz { background:var(--navy); color:#fff; padding:26px; border-radius:14px; } .quiz h3 { margin-top:0; } .quiz button { background:#fff; color:var(--ink); border-radius:7px; padding:9px 13px; margin:5px 4px 0 0; border:2px solid transparent; font-size:13px; } .quiz button:hover { border-color:var(--mint); } #quiz-result { color:var(--mint); font-weight:700; margin:14px 0 0; min-height:24px; }
+    footer { background:var(--navy); color:#a9bfbb; padding:30px 5vw; font-size:12px; display:flex; justify-content:space-between; } footer strong { color:#fff; }
+    @media (max-width:850px) { nav { display:none; } .hero { grid-template-columns:1fr; padding-top:52px; } .layout { grid-template-columns:1fr; gap:20px; } .side { position:static; display:flex; gap:10px; overflow:auto; padding-bottom:5px; border-bottom:1px solid var(--line); } .side-label, .side-note { display:none; } .side a { white-space:nowrap; border-left:0; border-bottom:2px solid transparent; padding:7px 3px; } .side a.active { border-color:var(--green); } }
+    @media (max-width:600px) { .top { justify-content:center; } .top span { display:none; } header { padding:16px 5vw; } .hero { padding-bottom:52px; } .terminal { box-shadow:10px 12px 0 #dcebe3; transform:none; } h2 { font-size:29px; } .grid, .compare { grid-template-columns:1fr; } footer { display:block; } footer span { display:block; margin-top:8px; } }
+  </style>
+</head>
+<body>
+  <div class="top"><span><b>SOUP SCHOOL / 01</b></span><span>一頁一個概念，從 HTML 到可用的爬蟲</span></div>
+  <header><div class="logo"><span class="logo-mark">&lt;/&gt;</span> Soup School</div><nav><a href="#start">快速開始</a><a href="#parse">解析文件</a><a href="#find">尋找元素</a><a href="#extract">擷取資料</a></nav><button class="header-cta" onclick="document.querySelector('#start').scrollIntoView()">開始學習 ↓</button></header>
+
+  <section class="hero"><div><div class="kicker">Python / BeautifulSoup 4</div><h1>讓網頁<br><span style="color:var(--coral)">開口說話。</span></h1><p>一份為初學者設計、也能當速查表使用的 BeautifulSoup 完整教學。讀懂 HTML、找到目標元素，最後把資料整理成真正有用的結果。</p><div class="hero-actions"><a class="primary" href="#start">開始第一章</a><a class="secondary" href="#cheatsheet">查看速查表</a></div></div><div class="terminal"><div class="terminal-top"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div><pre><span class="prompt">&gt;&gt;&gt;</span> <span class="function">from bs4 import BeautifulSoup</span>
+<span class="prompt">&gt;&gt;&gt;</span> soup = BeautifulSoup(html, <span class="string">"html.parser"</span>)
+<span class="prompt">&gt;&gt;&gt;</span> soup.title.text
+<span class="string">'BeautifulSoup 教學'</span>
+
+<span class="comment"># 你的第一筆資料，就在這裡。</span></pre></div></section>
+
+  <div class="layout"><aside class="side"><div class="side-label">Course map</div><a class="active" href="#start">01　快速開始</a><a href="#parse">02　解析文件</a><a href="#find">03　尋找元素</a><a href="#extract">04　擷取資料</a><a href="#advanced">05　進階技巧</a><a href="#cheatsheet">06　速查表</a><div class="side-note">建議學習順序<br>先跑範例，再改一個參數。每個概念都能立即在你的專案裡驗證。</div></aside>
+    <main class="content">
+      <div class="searchbox"><span>⌕</span><input id="lesson-search" type="search" placeholder="搜尋教學內容，例如：select、class、連結..."></div>
+      <section class="section" id="start"><div class="section-head"><span class="number">01</span><div><h2>快速開始</h2><p class="lead">BeautifulSoup 是 Python 的 HTML/XML 解析工具，適合把複雜的標籤結構轉成容易操作的 Python 物件。</p></div></div><div class="grid"><div class="info"><span class="pill">INSTALL</span><strong>安裝套件</strong><p>在終端機執行 pip install beautifulsoup4。若要發送 HTTP 請求，可另外安裝 requests。</p></div><div class="info"><span class="pill">IMPORT</span><strong>載入套件</strong><p>從 bs4 匯入 BeautifulSoup 類別，名稱裡的 4 代表 BeautifulSoup 第四代 API。</p></div><div class="info"><span class="pill">INPUT</span><strong>準備 HTML</strong><p>可以解析字串、檔案內容，或 requests.get(url).text 取得的網頁原始碼。</p></div></div><div class="code-wrap"><div class="code-label">terminal</div><button class="copy">複製</button><pre>pip install beautifulsoup4 requests</pre></div></section>
+      <section class="section" id="parse"><div class="section-head"><span class="number">02</span><div><h2>解析文件</h2><p class="lead">建立 soup 物件之後，就能像走訪樹狀結構一樣讀取標籤、屬性與文字。</p></div></div><div class="code-wrap"><div class="code-label">parse.py</div><button class="copy">複製</button><pre>from bs4 import BeautifulSoup
+
+html = <span class="string">"""&lt;html&gt;
+  &lt;head&gt;&lt;title&gt;我的網站&lt;/title&gt;&lt;/head&gt;
+  &lt;body&gt;&lt;h1 class='title'&gt;Hello!&lt;/h1&gt;&lt;/body&gt;
+&lt;/html&gt;"""</span>
+
+soup = BeautifulSoup(html, <span class="string">"html.parser"</span>)
+print(soup.title)       <span class="comment"># &lt;title&gt;我的網站&lt;/title&gt;</span>
+print(soup.title.text)  <span class="comment"># 我的網站</span>
+print(soup.h1[<span class="string">'class'</span>])  <span class="comment"># ['title']</span></pre></div><div class="info"><strong>選擇解析器</strong><p><code>html.parser</code> 不需額外安裝，適合一般用途。若遇到破損 HTML，可考慮 <code>lxml</code>；解析 XML 則使用 <code>xml</code>。</p></div></section>
+      <section class="section" id="find"><div class="section-head"><span class="number">03</span><div><h2>尋找元素</h2><p class="lead">最常用的兩個方法是 <code>find()</code> 找第一個結果，以及 <code>find_all()</code> 找出所有符合項目。</p></div></div><div class="code-wrap"><div class="code-label">find.py</div><button class="copy">複製</button><pre><span class="comment"># 找第一個 h1</span>
+title = soup.find(<span class="string">'h1'</span>)
+
+<span class="comment"># 依標籤與 class 找所有卡片</span>
+cards = soup.find_all(<span class="string">'article'</span>, class_=<span class="string">'card'</span>)
+
+<span class="comment"># 依 id 找元素；CSS class 要用 class_</span>
+menu = soup.find(id=<span class="string">'main-menu'</span>)
+
+<span class="comment"># CSS selector：彈性最高</span>
+links = soup.select(<span class="string">'nav a[href]'</span>)</pre></div><div class="grid"><div class="info"><strong>find vs find_all</strong><p><code>find</code> 找不到時回傳 None；<code>find_all</code> 找不到時回傳空的 ResultSet，迭代前不必特別判斷。</p></div><div class="info"><strong>CSS selector</strong><p><code>.card</code> 找 class、<code>#header</code> 找 id、<code>ul &gt; li</code> 找直接子元素，語法與 CSS 相同。</p></div><div class="info"><strong>條件過濾</strong><p>可傳入正規表示式、函式或多個屬性條件，精準篩掉不需要的元素。</p></div></div></section>
+      <section class="section" id="extract"><div class="section-head"><span class="number">04</span><div><h2>擷取資料</h2><p class="lead">找到標籤只是開始。接著取出乾淨的文字、連結與圖片網址，並整理成資料結構。</p></div></div><div class="compare"><div class="bad"><h4>容易踩雷</h4><pre>text = tag.text</pre></div><div class="good"><h4>更穩定的寫法</h4><pre>text = tag.get_text(strip=True)</pre></div></div><div class="code-wrap"><div class="code-label">extract.py</div><button class="copy">複製</button><pre>for card in soup.select(<span class="string">'.card'</span>):
+    name = card.select_one(<span class="string">'h2'</span>).get_text(strip=True)
+    link = card.select_one(<span class="string">'a'</span>).get(<span class="string">'href'</span>)
+    image = card.select_one(<span class="string">'img'</span>).get(<span class="string">'src'</span>)
+    data.append({<span class="string">'name'</span>: name, <span class="string">'link'</span>: link, <span class="string">'image'</span>: image})</pre></div><div class="info"><strong>屬性取得</strong><p>用 <code>tag['href']</code> 取值時，屬性不存在會發生 KeyError；用 <code>tag.get('href')</code> 則會安全地回傳 None。</p></div></section>
+      <section class="section" id="advanced"><div class="section-head"><span class="number">05</span><div><h2>進階技巧</h2><p class="lead">處理真實網站時，資料通常不會整齊地躺在一個標籤裡。這些技巧能讓程式更可靠。</p></div></div><div class="grid"><div class="info"><span class="pill">NAVIGATE</span><strong>走訪父子節點</strong><p><code>tag.parent</code> 往上、<code>tag.children</code> 往下、<code>tag.next_sibling</code> 找相鄰節點。</p></div><div class="info"><span class="pill">CLEAN</span><strong>移除不需要的標籤</strong><p>呼叫 <code>tag.decompose()</code> 徹底刪除 script、style 或廣告元素，再擷取文字。</p></div><div class="info"><span class="pill">SAVE</span><strong>輸出結構化資料</strong><p>將結果放進 list of dict，再用 csv 或 json 模組寫入檔案，方便後續分析。</p></div></div><h3>一個實用的 requests + BeautifulSoup 流程</h3><div class="code-wrap"><div class="code-label">scrape.py</div><button class="copy">複製</button><pre>import requests
+from bs4 import BeautifulSoup
+
+response = requests.get(url, timeout=10)
+response.raise_for_status()
+soup = BeautifulSoup(response.text, <span class="string">'html.parser'</span>)
+
+<span class="comment"># 尊重網站 robots.txt、服務條款與請求頻率</span>
+items = [
+    {<span class="string">'title'</span>: item.get_text(strip=True)}
+    for item in soup.select(<span class="string">'.product-title'</span>)
+]</pre></div></section>
+      <section class="section" id="cheatsheet"><div class="section-head"><span class="number">06</span><div><h2>速查表</h2><p class="lead">把這一頁存起來，遇到常見需求時快速找到對應寫法。</p></div></div><div class="grid"><div class="info"><code>soup.title</code><p>取得第一個 title 標籤</p></div><div class="info"><code>tag.text</code><p>取得文字內容</p></div><div class="info"><code>find_all('a')</code><p>取得所有連結</p></div><div class="info"><code>select_one('.item')</code><p>取得第一個 CSS 選擇結果</p></div><div class="info"><code>tag.get('href')</code><p>安全取得屬性值</p></div><div class="info"><code>prettify()</code><p>格式化輸出 HTML</p></div></div><div class="quiz"><h3>小測驗：哪一個方法會找出所有符合的元素？</h3><button data-answer="no">find()</button><button data-answer="yes">find_all()</button><button data-answer="no">get_text()</button><p id="quiz-result"></p></div></section>
+    </main>
+  </div>
+  <footer><strong>Soup School</strong><span>BeautifulSoup 4 學習筆記 · Built for curious developers</span></footer>
+  <script>
+    document.querySelectorAll('.copy').forEach(button => button.addEventListener('click', () => { const code = button.parentElement.querySelector('pre').innerText; navigator.clipboard.writeText(code); const old = button.textContent; button.textContent = '已複製'; setTimeout(() => button.textContent = old, 1200); }));
+    document.querySelectorAll('.quiz button').forEach(button => button.addEventListener('click', () => { const result = document.querySelector('#quiz-result'); result.textContent = button.dataset.answer === 'yes' ? '答對了！find_all() 會回傳所有符合條件的元素。' : '再想一下：這個方法只會回傳第一個符合的元素。'; }));
+    const lessonSearch = document.querySelector('#lesson-search'); const sections = [...document.querySelectorAll('.section')]; lessonSearch.addEventListener('input', () => { const query = lessonSearch.value.trim().toLowerCase(); sections.forEach(section => section.style.display = !query || section.innerText.toLowerCase().includes(query) ? '' : 'none'); });
+    const links = [...document.querySelectorAll('.side a')]; const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { links.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`)); } }), { rootMargin:'-30% 0px -60% 0px' }); sections.forEach(section => observer.observe(section));
+  </script>
+</body>
+</html>
